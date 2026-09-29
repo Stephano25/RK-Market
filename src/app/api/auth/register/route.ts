@@ -1,0 +1,56 @@
+import { NextRequest, NextResponse } from 'next/server'
+import bcrypt from 'bcryptjs'
+import { z } from 'zod'
+import { prisma } from '../../../../lib/prisma'
+import { signToken } from '../../../../lib/auth'
+
+const schema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
+})
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json()
+    const { name, email, password } = schema.parse(body)
+
+    const existing = await prisma.user.findUnique({ where: { email } })
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Cet email est déjà utilisé' },
+        { status: 400 }
+      )
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const user = await prisma.user.create({
+      data: { name, email, password: hashedPassword },
+    })
+
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    })
+
+    const response = NextResponse.json({
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    })
+
+    response.cookies.set('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+    })
+
+    return response
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || 'Erreur serveur' },
+      { status: 400 }
+    )
+  }
+}
