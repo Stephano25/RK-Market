@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { useCart } from '../context/CartContext'
+import { useCart } from '@/context/CartContext'
 import { useRouter } from 'next/navigation'
 
 interface User {
@@ -54,22 +54,39 @@ export default function Navbar() {
 
           {user ? (
             <div className="flex items-center gap-3">
+              {/* 👑 BOUTON ADMIN */}
+              {user.role === 'ADMIN' && (
+                <Link
+                  href="/admin"
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold text-sm flex items-center gap-2"
+                >
+                  👑 Dashboard Admin
+                </Link>
+              )}
+
+              <Link
+                href="/orders"
+                className="text-sm text-gray-700 hover:text-green-600 font-medium"
+              >
+                📦 Mes commandes
+              </Link>
+
               <span className="text-sm text-gray-600">👤 {user.name}</span>
               <button
                 onClick={logout}
-                className="text-sm text-red-600 hover:underline"
+                className="text-sm text-red-600 hover:underline font-medium"
               >
                 Déconnexion
               </button>
             </div>
           ) : (
             <div className="flex gap-3">
-              <Link href="/login" className="text-green-600 hover:underline">
+              <Link href="/login" className="text-green-600 hover:underline font-medium">
                 Connexion
               </Link>
               <Link
                 href="/register"
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium"
               >
                 Inscription
               </Link>

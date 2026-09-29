@@ -33,3 +33,8 @@ export function getCurrentUser(): JWTPayload | null {
   if (!token) return null
   return verifyToken(token)
 }
+
+export function isAdmin(): boolean {
+  const user = getCurrentUser()
+  return user?.role === 'ADMIN'
+}

@@ -78,19 +78,16 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile header */}
+      {/* Header mobile */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-green-700 text-white p-4 flex items-center justify-between">
         <span className="font-bold">👑 Admin RK Market</span>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="text-2xl"
-        >
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-2xl">
           {mobileOpen ? '✕' : '☰'}
         </button>
       </div>
 
-      {/* Sidebar desktop */}
-      <aside className="hidden lg:flex flex-col w-64 bg-green-700 text-white min-h-screen sticky top-0">
+      {/* Sidebar desktop : FIXE à gauche */}
+      <aside className="hidden lg:flex flex-col w-64 bg-green-700 text-white fixed top-0 left-0 bottom-0 z-40">
         <SidebarContent />
       </aside>
 

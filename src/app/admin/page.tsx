@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import StatsCard from '../../components/admin/StatsCard'
-import SalesChart from '../../components/admin/SalesChart'
+import StatsCard from '@/components/admin/StatsCard'
+import SalesChart from '@/components/admin/SalesChart'
 import { prisma } from '@/lib/prisma'
 import { formatAr } from '@/lib/format'
 
@@ -33,7 +33,6 @@ async function getStats() {
   const totalUsers = await prisma.user.count({ where: { role: 'USER' } })
   const totalProducts = await prisma.product.count()
 
-  // Ventes 7 derniers jours
   const last7Days: { date: string; total: number }[] = []
   for (let i = 6; i >= 0; i--) {
     const date = new Date()
@@ -66,17 +65,13 @@ async function getStats() {
 
 export default async function AdminDashboard() {
   const stats = await getStats()
-
   const categories = Object.entries(stats.salesByCategory)
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">
-            Tableau de bord
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800">Tableau de bord</h1>
           <p className="text-gray-500 mt-1">
             Vue d'ensemble de votre activité RK Market
           </p>
@@ -89,7 +84,6 @@ export default async function AdminDashboard() {
         </Link>
       </div>
 
-      {/* Notification rupture stock */}
       {stats.lowStock.length > 0 && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
           <div className="flex items-start gap-3">
@@ -116,35 +110,13 @@ export default async function AdminDashboard() {
         </div>
       )}
 
-      {/* Cartes stats principales */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          title="Ventes totales"
-          value={formatAr(stats.totalRevenue)}
-          icon="💰"
-          color="green"
-        />
-        <StatsCard
-          title="Produits vendus"
-          value={stats.totalSold.toString()}
-          icon="📦"
-          color="blue"
-        />
-        <StatsCard
-          title="Commandes"
-          value={stats.totalOrders.toString()}
-          icon="🛒"
-          color="purple"
-        />
-        <StatsCard
-          title="Clients"
-          value={stats.totalUsers.toString()}
-          icon="👥"
-          color="orange"
-        />
+        <StatsCard title="Ventes totales" value={formatAr(stats.totalRevenue)} icon="💰" color="green" />
+        <StatsCard title="Produits vendus" value={stats.totalSold.toString()} icon="📦" color="blue" />
+        <StatsCard title="Commandes" value={stats.totalOrders.toString()} icon="🛒" color="purple" />
+        <StatsCard title="Clients" value={stats.totalUsers.toString()} icon="👥" color="orange" />
       </div>
 
-      {/* Graphique + Catégories */}
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-xl shadow p-6">
           <h2 className="text-lg font-bold mb-4">Ventes des 7 derniers jours</h2>
@@ -170,65 +142,6 @@ export default async function AdminDashboard() {
                   </p>
                 </div>
               ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Alertes stock + Top produits */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">⚠️ Stocks faibles</h2>
-            <Link
-              href="/admin/stocks"
-              className="text-sm text-green-600 hover:underline"
-            >
-              Voir tout →
-            </Link>
-          </div>
-          {stats.lowStock.length === 0 ? (
-            <p className="text-gray-500 text-sm">Tous les stocks sont OK ✅</p>
-          ) : (
-            <div className="space-y-2">
-              {stats.lowStock.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex justify-between items-center p-3 bg-red-50 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium text-sm">{p.name}</p>
-                    <p className="text-xs text-gray-500">{p.category}</p>
-                  </div>
-                  <span className="font-bold text-red-600">
-                    {p.stock} unités
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-lg font-bold mb-4">🏆 Top 5 produits vendus</h2>
-          {Object.keys(stats.salesByCategory).length === 0 ? (
-            <p className="text-gray-500 text-sm">Aucune vente pour le moment</p>
-          ) : (
-            <div className="space-y-2">
-              {Object.entries(stats.salesByCategory)
-                .sort((a, b) => b[1].count - a[1].count)
-                .slice(0, 5)
-                .map(([cat, data]) => (
-                  <div
-                    key={cat}
-                    className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-                  >
-                    <span className="text-sm font-medium">{cat}</span>
-                    <span className="text-sm font-bold text-green-600">
-                      {data.count} ventes
-                    </span>
-                  </div>
-                ))}
             </div>
           )}
         </div>
