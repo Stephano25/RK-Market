@@ -12,3 +12,17 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* ===== Admin layout ===== */
+.admin-content {
+  margin-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .admin-content {
+    margin-left: 16rem; /* w-64 */
+  }
+
+  body.sidebar-collapsed .admin-content {
+    margin-left: 5rem; /* w-20 */
+  }
+}

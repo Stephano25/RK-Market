@@ -32,16 +32,11 @@ export default function ReportsPage() {
       <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Rapports & Bilans</h1>
-          <p className="text-gray-500 mt-1">
-            Analysez les performances de RK Market
-          </p>
+          <p className="text-gray-500 mt-1">Analysez les performances de RK Market</p>
         </div>
-        {report && (
-          <ReportButtons report={report} period={period} />
-        )}
+        {report && <ReportButtons report={report} period={period} />}
       </div>
 
-      {/* Filtres période */}
       <div className="bg-white rounded-xl shadow p-2 inline-flex flex-wrap gap-1">
         {PERIODS.map((p) => (
           <button
@@ -63,7 +58,6 @@ export default function ReportsPage() {
         <div className="text-center py-16 text-gray-500">Chargement...</div>
       ) : (
         <>
-          {/* Cartes stats période */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white rounded-xl shadow p-5">
               <p className="text-xs text-gray-500 uppercase">Chiffre d'affaires</p>
@@ -91,7 +85,6 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* Détails par catégorie */}
           <div className="bg-white rounded-xl shadow p-6">
             <h2 className="text-lg font-bold mb-4">Ventes par catégorie</h2>
             <div className="overflow-x-auto">
@@ -135,15 +128,12 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* Liste des commandes */}
           <div className="bg-white rounded-xl shadow p-6">
             <h2 className="text-lg font-bold mb-4">
               Détail des commandes ({report.orders.length})
             </h2>
             {report.orders.length === 0 ? (
-              <p className="text-gray-500 text-sm">
-                Aucune commande sur cette période
-              </p>
+              <p className="text-gray-500 text-sm">Aucune commande sur cette période</p>
             ) : (
               <div className="overflow-x-auto max-h-96 overflow-y-auto">
                 <table className="w-full text-sm">

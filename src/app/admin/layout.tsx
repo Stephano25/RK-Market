@@ -22,9 +22,10 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-100">
       <AdminSidebar />
-      <main className="flex-1 overflow-x-hidden p-6 lg:p-8 lg:ml-64">
+      {/* Le padding-left s'adapte via CSS global */}
+      <main className="admin-content p-6 lg:p-8 pt-20 lg:pt-8 transition-all duration-300">
         {children}
       </main>
     </div>

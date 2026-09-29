@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAdminApi } from '@/lib/admin-auth'
+import { getCurrentUser } from '@/lib/auth'
 
 export async function GET() {
-  const user = await requireAdminApi()
-  if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  const u = getCurrentUser()
+  if (!u || u.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  }
 
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: 'desc' },

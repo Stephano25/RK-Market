@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAdminApi } from '@/lib/admin-auth'
+import { getCurrentUser } from '@/lib/auth'
 
 type Period = 'day' | 'week' | 'month' | 'semester' | 'year'
 
@@ -29,17 +29,17 @@ function getDateRange(period: Period) {
       start.setHours(0, 0, 0, 0)
       break
   }
-
   return { start, end: now }
 }
 
 export async function GET(req: NextRequest) {
-  const user = await requireAdminApi()
-  if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  const u = getCurrentUser()
+  if (!u || u.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  }
 
   const { searchParams } = new URL(req.url)
   const period = (searchParams.get('period') || 'day') as Period
-
   const { start, end } = getDateRange(period)
 
   const orders = await prisma.order.findMany({
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
     },
     include: {
       items: { include: { product: true } },
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true } },
     },
     orderBy: { createdAt: 'desc' },
   })

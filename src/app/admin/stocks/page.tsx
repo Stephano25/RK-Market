@@ -16,6 +16,7 @@ export default function StocksPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState<'all' | 'low' | 'out'>('all')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState<number>(0)
   const [saving, setSaving] = useState(false)
@@ -40,11 +41,6 @@ export default function StocksPage() {
     setEditValue(p.stock)
   }
 
-  const cancelEdit = () => {
-    setEditingId(null)
-    setEditValue(0)
-  }
-
   const saveStock = async (id: string) => {
     setSaving(true)
     try {
@@ -62,13 +58,20 @@ export default function StocksPage() {
     }
   }
 
-  const filtered = products.filter(
-    (p) =>
+  const filtered = products.filter((p) => {
+    const matchSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.category.toLowerCase().includes(search.toLowerCase())
-  )
+    const matchFilter =
+      filter === 'all'
+        ? true
+        : filter === 'low'
+        ? p.stock > 0 && p.stock < 10
+        : p.stock === 0
+    return matchSearch && matchFilter
+  })
 
-  const lowStockCount = products.filter((p) => p.stock < 10).length
+  const lowStockCount = products.filter((p) => p.stock > 0 && p.stock < 10).length
   const outOfStockCount = products.filter((p) => p.stock === 0).length
 
   return (
@@ -76,9 +79,7 @@ export default function StocksPage() {
       <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Gestion des stocks</h1>
-          <p className="text-gray-500 mt-1">
-            {products.length} produits en catalogue
-          </p>
+          <p className="text-gray-500 mt-1">{products.length} produits en catalogue</p>
         </div>
         <div className="flex gap-3">
           <div className="bg-yellow-100 px-4 py-2 rounded-lg">
@@ -92,13 +93,34 @@ export default function StocksPage() {
         </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Rechercher un produit..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full md:w-96 px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-      />
+      <div className="flex flex-wrap gap-3">
+        <input
+          type="text"
+          placeholder="Rechercher un produit..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 min-w-[200px] px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+        <div className="flex bg-white rounded-lg shadow overflow-hidden">
+          {[
+            { id: 'all', label: 'Tous' },
+            { id: 'low', label: 'Faibles' },
+            { id: 'out', label: 'Rupture' },
+          ].map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id as any)}
+              className={`px-4 py-2.5 text-sm font-medium ${
+                filter === f.id
+                  ? 'bg-green-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <div className="overflow-x-auto">
@@ -153,6 +175,7 @@ export default function StocksPage() {
                           }
                           className="w-20 px-2 py-1 border rounded text-center"
                           autoFocus
+                          min={0}
                         />
                       ) : (
                         <span className="font-bold">{p.stock}</span>
@@ -184,7 +207,7 @@ export default function StocksPage() {
                             💾 Enregistrer
                           </button>
                           <button
-                            onClick={cancelEdit}
+                            onClick={() => setEditingId(null)}
                             className="text-xs px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                           >
                             Annuler

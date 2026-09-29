@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAdminApi } from '@/lib/admin-auth'
+import { getCurrentUser } from '@/lib/auth'
+
+function isAdmin() {
+  const u = getCurrentUser()
+  return u?.role === 'ADMIN'
+}
 
 export async function GET() {
-  const user = await requireAdminApi()
-  if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  if (!isAdmin()) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
 
   const products = await prisma.product.findMany({
     orderBy: [{ stock: 'asc' }, { name: 'asc' }],
@@ -13,8 +17,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const user = await requireAdminApi()
-  if (!user) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+  if (!isAdmin()) return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
 
   const { productId, stock } = await req.json()
   if (typeof stock !== 'number' || stock < 0) {
