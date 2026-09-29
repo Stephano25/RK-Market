@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Navbar from '../components/NavBar'
-import { CartProvider } from '../context/CartContext'
+import Navbar from '@/components/NavBar'
+import { CartProvider } from '@/context/CartContext'
 
 export const metadata: Metadata = {
   title: 'RK Market - Votre supermarché en ligne',
