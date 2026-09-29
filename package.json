@@ -19,7 +19,10 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "bcryptjs": "^2.4.3",
+    "jose": "^6.2.12",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "next": "14.2.15",
     "paidmada": "github:mandaniainarandriambinintsoa/paidmada-mobile-money",
     "react": "^18.3.1",

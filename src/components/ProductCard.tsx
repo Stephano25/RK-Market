@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useCart } from '../context/CartContext'
+import { useCart } from '@/context/CartContext'
 import { useRouter } from 'next/navigation'
+import { formatAr } from '@/lib/format'
 
 interface Product {
   id: string
@@ -57,8 +58,8 @@ export default function ProductCard({ product }: { product: Product }) {
           {product.description}
         </p>
         <div className="flex items-center justify-between mt-4">
-          <span className="text-2xl font-bold text-green-600">
-            {product.price.toFixed(2)} €
+          <span className="text-xl font-bold text-green-600">
+            {formatAr(product.price)}
           </span>
           <button
             onClick={handleAdd}

@@ -1,13 +1,33 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
+  // ===== ADMIN =====
+  const adminPassword = await bcrypt.hash('rk@2026', 10)
+  await prisma.user.upsert({
+    where: { email: 'admin@rk-market.mg' },
+    update: {
+      password: adminPassword,
+      role: 'ADMIN',
+    },
+    create: {
+      email: 'admin@rk-market.mg',
+      name: 'Administrateur RK Market',
+      password: adminPassword,
+      role: 'ADMIN',
+    },
+  })
+  console.log('👑 Admin créé : admin@rk-market.mg / rk@2026')
+
+  // ===== NETTOYAGE =====
   await prisma.orderItem.deleteMany()
   await prisma.order.deleteMany()
   await prisma.cartItem.deleteMany()
   await prisma.product.deleteMany()
 
+  // ===== PRODUITS =====
   const products = [
     // ===== PPN =====
     {

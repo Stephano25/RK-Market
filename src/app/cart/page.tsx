@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useCart } from '../../context/CartContext'
+import { useCart } from '@/context/CartContext'
+import { formatAr } from '@/lib/format'
 
 export default function CartPage() {
   const { items, total, updateQuantity, removeItem } = useCart()
@@ -39,7 +40,7 @@ export default function CartPage() {
               <div className="flex-1">
                 <h3 className="font-bold">{item.product.name}</h3>
                 <p className="text-green-600 font-semibold">
-                  {item.product.price.toFixed(2)} €
+                  {formatAr(item.product.price)}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -73,7 +74,7 @@ export default function CartPage() {
           <h2 className="text-xl font-bold mb-4">Récapitulatif</h2>
           <div className="flex justify-between mb-2">
             <span>Sous-total</span>
-            <span>{total.toFixed(2)} €</span>
+            <span>{formatAr(total)}</span>
           </div>
           <div className="flex justify-between mb-4">
             <span>Livraison</span>
@@ -82,7 +83,7 @@ export default function CartPage() {
           <hr className="my-4" />
           <div className="flex justify-between text-lg font-bold mb-6">
             <span>Total</span>
-            <span className="text-green-600">{total.toFixed(2)} €</span>
+            <span className="text-green-600">{formatAr(total)}</span>
           </div>
           <Link
             href="/checkout"
