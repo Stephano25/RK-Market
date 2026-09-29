@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useCart } from '@/context/CartContext'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface User {
   id: string
@@ -34,8 +35,16 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-green-600 flex items-center gap-2">
-          🛒 RK Market
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/icon.png"
+            alt="RK Market"
+            width={40}
+            height={40}
+            className="object-contain"
+            priority
+          />
+          <span className="text-2xl font-bold text-green-600">RK Market</span>
         </Link>
 
         <div className="flex items-center gap-6">
@@ -54,7 +63,6 @@ export default function Navbar() {
 
           {user ? (
             <div className="flex items-center gap-3">
-              {/* 👑 BOUTON ADMIN */}
               {user.role === 'ADMIN' && (
                 <Link
                   href="/admin"
